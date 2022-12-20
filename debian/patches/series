@@ -1,0 +1,5 @@
+wx-config-conditionalise-webview-in-std.patch
+reproducible-build.patch
+warn-for-compiler-abi-mismatch.patch
+force-x11-for-wxgl.patch
+aui-dock-art-use-system-color.patch
