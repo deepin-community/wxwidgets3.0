@@ -1,3 +1,16 @@
+wxwidgets3.0 (3.0.5.1+dfsg-deepin4) unstable; urgency=medium
+
+  * Fix the build failure with autoconf 2.72: debian/rules regenerates
+    configure with the system autoconf, which no longer defines $EGREP
+    unless AC_PROG_EGREP is used, so no utils/wxrc/Makefile was
+    generated and the build failed at debian/rules:270 with
+    "objs_gtk3_sh/utils/wxrc: No such file or directory".
+  * Backport upstream commit 00dff6e3bc ("Stop using $EGREP in
+    configure.ac unnecessarily") as debian/patches/fix-build-with-
+    autoconf-2.72.patch.
+
+ -- lichenggang <lichenggang@uniontech.com>  Mon, 21 Sep 2026 13:11:14 +0800
+
 wxwidgets3.0 (3.0.5.1+dfsg-deepin3) unstable; urgency=medium
 
   * Rebuild.
