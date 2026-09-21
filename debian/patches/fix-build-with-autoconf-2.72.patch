@@ -1,0 +1,32 @@
+Description: Stop using $EGREP in configure.in unnecessarily
+ We don't have DISABLED_UTILS or DISABLED_DEMOS variables, so it is useless
+ to exclude them from the makefiles list -- just stop doing it.
+ .
+ With autoconf 2.72, EGREP is no longer defined unless AC_PROG_EGREP is used.
+ debian/rules regenerates configure with the system autoconf, so $EGREP
+ expands to the empty string, the shell tries to run "-v" as a command, and no
+ utils/*/Makefile (in particular utils/wxrc/Makefile) is generated. The build
+ then fails at debian/rules:270 with
+ "objs_gtk3_sh/utils/wxrc: No such file or directory".
+Author: Vadim Zeitlin <vadim@wxwidgets.org>
+Origin: upstream, https://github.com/wxWidgets/wxWidgets/commit/00dff6e3bce72cc444c0602e13cf346a3340746b
+Bug: https://github.com/wxWidgets/wxWidgets/issues/24168
+Forwarded: not-needed
+Last-Update: 2026-09-21
+
+--- a/configure.in
++++ b/configure.in
+@@ -8570,12 +8570,7 @@
+                 done
+             else
+                 dnl assume that everything compiles for utils &c
+-                dnl any that shouldn't be built can be added to
+-                dnl DISABLED_UTILS, DISABLED_DEMOS
+-                disabled_var=DISABLED_`echo $subdir | tr '[[a-z]]' '[[A-Z]]'`
+-                eval "disabled=\$$disabled_var"
+-                disabled=/`echo X $disabled | sed 's@ @/|/@g'`/
+-                makefiles=`(cd $srcdir ; find $subdir -name Makefile.in) | $EGREP -v "$disabled"`
++                makefiles=`(cd $srcdir ; find $subdir -name Makefile.in)`
+             fi
+         else
+             dnl we build wxBase only
