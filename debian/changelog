@@ -1,3 +1,9 @@
+wxwidgets3.0 (3.0.5.1+dfsg-deepin3) unstable; urgency=medium
+
+  * Rebuild.
+
+ -- lichenggang <lichenggang@uniontech.com>  Mon, 21 Sep 2026 11:36:36 +0800
+
 wxwidgets3.0 (3.0.5.1+dfsg-deepin2) unstable; urgency=medium
 
   * Move to main.
