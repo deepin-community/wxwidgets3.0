@@ -1,3 +1,19 @@
+wxwidgets3.0 (3.0.5.1+dfsg-deepin5) unstable; urgency=medium
+
+  * Fix wx-config being completely unusable: the 3.0.5.1+dfsg-deepin4
+    autoconf 2.72 fix only removed the $EGREP use from configure.in and
+    missed the independent @EGREP@ substitution in wx-config.in. As
+    autoconf 2.72 no longer defines EGREP unless AC_PROG_EGREP is used,
+    the generated lib/wx/config/base-unicode-3.0 and gtk3-unicode-3.0
+    scripts contain a literal EGREP="@EGREP@", so every wx-config query
+    (--cxxflags, --libs, --version, ...) fails with
+    "No config found to match: /usr/bin/wx-config --version".
+  * Use grep -E directly in wx-config.in instead of relying on the
+    @EGREP@ substitution, matching what upstream did for the 3.2 series.
+    Patch: debian/patches/wx-config-egrep-autoconf-2.72.patch.
+
+ -- lichenggang <lichenggang@uniontech.com>  Tue, 22 Sep 2026 20:49:15 +0800
+
 wxwidgets3.0 (3.0.5.1+dfsg-deepin4) unstable; urgency=medium
 
   * Fix the build failure with autoconf 2.72: debian/rules regenerates

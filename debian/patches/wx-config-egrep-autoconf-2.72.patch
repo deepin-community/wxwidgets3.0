@@ -1,0 +1,57 @@
+Description: wx-config: don't rely on the @EGREP@ configure substitution
+ debian/rules regenerates configure with the system autoconf (2.72).  Since
+ autoconf 2.72, EGREP is no longer defined unless AC_PROG_EGREP is called
+ explicitly, so the @EGREP@ in wx-config.in is left unsubstituted and the
+ generated config scripts (lib/wx/config/base-unicode-3.0 and
+ gtk3-unicode-3.0) end up containing the literal string
+     EGREP="@EGREP@"
+ which is not a command.  find_eligible_delegates() and user_mask_fits()
+ therefore always fail, and every wx-config query (--cxxflags, --libs,
+ --version, ...) only prints
+     Warning: No config found to match: /usr/bin/wx-config --version
+ which breaks any build that uses wx-config.
+ .
+ 3.0.5.1+dfsg-deepin4 (fix-build-with-autoconf-2.72.patch) only removed the
+ $EGREP use from configure.in and missed this second, independent use in
+ wx-config.in: the former is a shell variable in the generated configure,
+ the latter is an autoconf substitution point.
+ .
+ Use grep -E directly, which is what upstream did for the 3.2 series
+ (wx-config.in in v3.2.6 has no EGREP reference at all).
+Author: lichenggang <lichenggang@uniontech.com>
+Last-Update: 2026-09-22
+
+--- a/wx-config.in
++++ b/wx-config.in
+@@ -104,8 +104,6 @@
+ 
+ 
+ # Contentious tools determined by configure.
+-EGREP="@EGREP@"
+-
+ 
+ # For the people who know what they want, or think they do:
+ # Divide the valid arguments into functional groups for later examination,
+@@ -533,11 +531,11 @@
+ # find_eligible_delegates _mask
+ # Outputs all the config files installed which match the
+ # (extended regex) _mask passed as an argument.
+-find_eligible_delegates() { echo "$installed_configs" | $EGREP "$1" 2> /dev/null; }
++find_eligible_delegates() { echo "$installed_configs" | grep -E "$1" 2> /dev/null; }
+ 
+ # user_mask_fits _config
+ # Returns true if the string _config satisfies the user specified mask.
+-user_mask_fits()          { echo "$1" | $EGREP "$configmask" > /dev/null 2>&1; }
++user_mask_fits()          { echo "$1" | grep -E "$configmask" > /dev/null 2>&1; }
+ 
+ # count_fields _word
+ # Returns the number of IFS split fields in _word
+@@ -686,7 +684,7 @@
+     if [ -n "$_legacy_configs" ]; then
+         _legacy_mask=`get_legacy_mask`
+         for d in $_legacy_configs; do
+-            if echo $d | $EGREP $_legacy_mask > /dev/null 2>&1 ; then
++            if echo $d | grep -E $_legacy_mask > /dev/null 2>&1 ; then
+                 echo "$d"
+                 return
+             fi
