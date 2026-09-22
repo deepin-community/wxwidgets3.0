@@ -4,3 +4,4 @@ warn-for-compiler-abi-mismatch.patch
 force-x11-for-wxgl.patch
 aui-dock-art-use-system-color.patch
 fix-build-with-autoconf-2.72.patch
+wx-config-egrep-autoconf-2.72.patch
